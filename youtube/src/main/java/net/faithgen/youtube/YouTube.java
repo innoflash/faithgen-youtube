@@ -103,7 +103,8 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
     @Override
     protected void onStart() {
         super.onStart();
-        loadYouTubeVideos(null);
+        if (youTubeObjects == null || youTubeObjects.size() == 0)
+            loadYouTubeVideos(null);
     }
 
     @Override

@@ -21,7 +21,6 @@ public class YTBPlayer extends YouTubeBaseActivity implements YouTubePlayer.OnIn
     private String videoId;
     private YouTubePlayerView playerView;
     private final static int RECOVERY_DIALOG_REQUEST = 1;
-    private String API_KEY = "AIzaSyC64i92ZZaZFE4-PyV_XgC2Zg3af5QuMyY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
