@@ -69,7 +69,7 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
         } else loadYouTubeVideos(youTubeResponse.getNextPageToken());
     }
 
-    private void loadYouTubeVideos(String pageToken) {
+    private void loadYouTubeVideos(final String pageToken) {
         API.get(this, Utils.getYouTubeUrl(pageToken), null, false, new ServerResponse() {
             @Override
             public void onServerResponse(String serverResponse) {
@@ -95,6 +95,8 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                if (youTubeResponse == null)
+                    Dialogs.showOkDialog(YouTube.this, net.faithgen.sdk.utils.Constants.SERVER_ERROR, true);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
