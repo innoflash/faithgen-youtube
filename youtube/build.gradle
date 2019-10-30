@@ -31,7 +31,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    implementation 'com.github.innoflash:android-sdk:4f7c408c47' //faithgen SDK
+    implementation 'com.github.faithgen:android-sdk:v1.0.1' //faithgen SDK
     implementation 'com.github.innoflash:iOSViews:6b8527d4b6' //iOSViews (custom)
     implementation 'com.squareup.picasso:picasso:2.71828' //image lazyloader lib
     implementation 'com.google.android.material:material:1.0.0'
