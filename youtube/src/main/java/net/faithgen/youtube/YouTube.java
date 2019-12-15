@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +17,7 @@ import net.faithgen.sdk.http.API;
 import net.faithgen.sdk.http.ErrorResponse;
 import net.faithgen.sdk.http.types.ServerResponse;
 import net.faithgen.sdk.singletons.GSONSingleton;
+import net.faithgen.sdk.singletons.VolleySingleton;
 import net.faithgen.sdk.utils.Dialogs;
 import net.faithgen.youtube.activities.YTBPlayer;
 import net.faithgen.youtube.utils.Constants;
@@ -26,14 +28,18 @@ import net.innoflash.iosview.swipelib.SwipeRefreshLayout;
 
 import java.util.List;
 
+import br.com.liveo.searchliveo.SearchLiveo;
+
 public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRefreshListener, RecyclerViewClickListener {
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private SearchLiveo searchLiveo;
     private RecyclerView videosListView;
     private YouTubeAdapter youTubeAdapter;
     private List<YouTubeObject> youTubeObjects;
     private YouTubeResponse youTubeResponse;
     private Intent intent;
+    private String filterText = "";
 
     @Override
     public String getPageTitle() {
@@ -53,12 +59,37 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
         swipeRefreshLayout = findViewById(R.id.videosSwiper);
         videosListView = findViewById(R.id.videosList);
 
+        searchLiveo = findViewById(R.id.search_liveo);
+        searchLiveo.with(this, charSequence -> {
+            filterText = (String) charSequence;
+            VolleySingleton.getInstance().getRequestQueue().cancelAll("Request_XTag");
+            loadYouTubeVideos(null, true);
+        })
+                .showVoice()
+                .hideKeyboardAfterSearch()
+                .hideSearch(() -> {
+                    getToolbar().setVisibility(View.VISIBLE);
+                    if (!filterText.isEmpty()) {
+                        filterText = "";
+                        searchLiveo.text(filterText);
+                        loadYouTubeVideos(null, true);
+                    }
+                })
+                .build();
+
+
         swipeRefreshLayout.setPullPosition(Gravity.BOTTOM);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeColors(R.color.ios_blue);
 
         videosListView.setLayoutManager(new LinearLayoutManager(this));
         videosListView.addOnItemTouchListener(new RecyclerTouchListener(this, videosListView, this));
+
+        setOnOptionsClicked(R.drawable.ic_search_blue18dp, view -> {
+            searchLiveo.setVisibility(View.VISIBLE);
+            searchLiveo.show();
+            getToolbar().setVisibility(View.GONE);
+        });
     }
 
     @Override
@@ -66,20 +97,20 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
         if (SDK.getSubscription().equals(Subscription.Free)) {
             swipeRefreshLayout.setRefreshing(false);
             Dialogs.showOkDialog(this, Constants.VIDEOS_IN_FREE_MODE, false);
-        } else loadYouTubeVideos(youTubeResponse.getNextPageToken());
+        } else loadYouTubeVideos(youTubeResponse.getNextPageToken(), false);
     }
 
-    private void loadYouTubeVideos(final String pageToken) {
-        API.get(this, Utils.getYouTubeUrl(pageToken), null, false, new ServerResponse() {
+    private void loadYouTubeVideos(final String pageToken, boolean reload) {
+        API.get(this, Utils.getYouTubeUrl(pageToken, filterText), null, false, new ServerResponse() {
             @Override
             public void onServerResponse(String serverResponse) {
                 Log.d("Tage", "onServerResponse: " + serverResponse);
                 youTubeResponse = GSONSingleton.getInstance().getGson().fromJson(serverResponse, YouTubeResponse.class);
-                if (youTubeObjects == null || youTubeObjects.size() == 0)
+                if (youTubeObjects == null || youTubeObjects.size() == 0 || reload)
                     youTubeObjects = youTubeResponse.getItems();
                 else
                     youTubeObjects.addAll(youTubeResponse.getItems());
-                if (videosListView.getAdapter() == null || videosListView.getAdapter().getItemCount() == 0) {
+                if (videosListView.getAdapter() == null || videosListView.getAdapter().getItemCount() == 0 || reload) {
                     youTubeAdapter = new YouTubeAdapter(YouTube.this, youTubeObjects);
                     videosListView.setAdapter(youTubeAdapter);
                 } else {
@@ -106,7 +137,7 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
     protected void onStart() {
         super.onStart();
         if (youTubeObjects == null || youTubeObjects.size() == 0)
-            loadYouTubeVideos(null);
+            loadYouTubeVideos(null, true);
     }
 
     @Override
@@ -122,6 +153,16 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
 
     @Override
     public void onLongClick(View view, int position) {
+//https://www.googleapis.com/youtube/v3/search?key=AIzaSyC64i92ZZaZFE4-PyV_XgC2Zg3af5QuMyY&channelId=UCbP2HeYGC3kfHjHLMPplZuQ&part=snippet,id&order=date&maxResults=20&type=video&q=build
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            if (requestCode == SearchLiveo.REQUEST_CODE_SPEECH_INPUT) {
+                searchLiveo.resultVoice(requestCode, resultCode, data);
+            }
+        }
     }
 }

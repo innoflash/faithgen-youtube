@@ -7,6 +7,12 @@
     android:keepScreenOn="true"
     android:orientation="vertical"
     tools:context=".YouTube">
+    <br.com.liveo.searchliveo.SearchLiveo
+        android:id="@+id/search_liveo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:searchLiveoHint="@string/search_video" />
 
     <net.innoflash.iosview.swipelib.SwipeRefreshLayout
         android:id="@+id/videosSwiper"

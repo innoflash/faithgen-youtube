@@ -9,14 +9,16 @@ import net.faithgen.sdk.menu.MenuChoice;
 
 import java.io.IOException;
 
+import nouri.in.goodprefslib.GoodPrefs;
+
 public class TheApp extends Application {
     @SuppressLint("ResourceType")
     @Override
     public void onCreate() {
         super.onCreate();
         try {
-            SDK.initializeThemeColor(getResources().getString(R.color.colorPrimaryDark));
-            SDK.initializeSDK(this, this.getAssets().open("config.json"), MenuChoice.CONTEXTUAL_MENU, Subscription.Premium);
+            GoodPrefs.init(this);
+            SDK.initializeSDK(this, this.getAssets().open("config.json"), getResources().getString(R.color.colorPrimaryDark), null);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -3,4 +3,5 @@
     <string name="title_activity_ytbplayer">YTBPlayer</string>
     <string name="youtube_api">AIzaSyC64i92ZZaZFE4-PyV_XgC2Zg3af5QuMyY</string>
     <string name="video">Video</string>
+    <string name="search_video">search video</string>
 </resources>
