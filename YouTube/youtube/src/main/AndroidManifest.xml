@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.faithgen.youtube">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application>
+        <activity
+            android:name=".activities.YTBPlayer"
+            android:parentActivityName=".YouTube"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.faithgen.youtube.YouTube" />
+        </activity>
+        <activity
+            android:name=".YouTube"
+            android:theme="@style/AppTheme.NoActionBar" />
+    </application>
+
+</manifest>
