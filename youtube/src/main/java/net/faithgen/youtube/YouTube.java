@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import net.faithgen.sdk.FaithGenActivity;
 import net.faithgen.sdk.SDK;
 import net.faithgen.sdk.enums.Subscription;
-import net.faithgen.sdk.http.API;
 import net.faithgen.sdk.http.ErrorResponse;
+import net.faithgen.sdk.http.FaithGenAPI;
 import net.faithgen.sdk.http.types.ServerResponse;
 import net.faithgen.sdk.singletons.GSONSingleton;
 import net.faithgen.sdk.singletons.VolleySingleton;
@@ -40,6 +40,7 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
     private YouTubeResponse youTubeResponse;
     private Intent intent;
     private String filterText = "";
+    private FaithGenAPI faithGenAPI;
 
     @Override
     public String getPageTitle() {
@@ -56,6 +57,7 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_you_tube);
 
+        faithGenAPI = new FaithGenAPI(this);
         swipeRefreshLayout = findViewById(R.id.videosSwiper);
         videosListView = findViewById(R.id.videosList);
 
@@ -93,19 +95,17 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
     }
 
     @Override
-    public void onRefresh() {
-        if (SDK.getSubscription().equals(Subscription.Free)) {
-            swipeRefreshLayout.setRefreshing(false);
-            Dialogs.showOkDialog(this, Constants.VIDEOS_IN_FREE_MODE, false);
-        } else loadYouTubeVideos(youTubeResponse.getNextPageToken(), false);
+    protected void onStop() {
+        super.onStop();
+        faithGenAPI.cancelRequests();
     }
 
-    private void loadYouTubeVideos(final String pageToken, boolean reload) {
-        API.get(this, Utils.getYouTubeUrl(pageToken, filterText), null, false, new ServerResponse() {
+    private ServerResponse getServerResponse(boolean reload) {
+        return new ServerResponse() {
             @Override
             public void onServerResponse(String serverResponse) {
-                Log.d("Tage", "onServerResponse: " + serverResponse);
-                youTubeResponse = GSONSingleton.getInstance().getGson().fromJson(serverResponse, YouTubeResponse.class);
+                Log.d("Tag", "onServerResponse: " + serverResponse);
+                youTubeResponse = GSONSingleton.Companion.getInstance().getGson().fromJson(serverResponse, YouTubeResponse.class);
                 if (youTubeObjects == null || youTubeObjects.size() == 0 || reload)
                     youTubeObjects = youTubeResponse.getItems();
                 else
@@ -121,16 +121,26 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
 
             @Override
             public void onError(ErrorResponse errorResponse) {
-                try {
-                    super.onError(errorResponse);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 if (youTubeResponse == null)
                     Dialogs.showOkDialog(YouTube.this, net.faithgen.sdk.utils.Constants.SERVER_ERROR, true);
                 swipeRefreshLayout.setRefreshing(false);
             }
-        });
+        };
+    }
+
+    @Override
+    public void onRefresh() {
+        if (SDK.getSubscription().equals(Subscription.Free)) {
+            swipeRefreshLayout.setRefreshing(false);
+            Dialogs.showOkDialog(this, Constants.VIDEOS_IN_FREE_MODE, false);
+        } else loadYouTubeVideos(youTubeResponse.getNextPageToken(), false);
+    }
+
+    private void loadYouTubeVideos(final String pageToken, boolean reload) {
+        faithGenAPI
+                .setProcess(Constants.FETCHING_VIDEOS)
+                .setServerResponse(getServerResponse(reload))
+                .request(Utils.getYouTubeUrl(pageToken, filterText));
     }
 
     @Override
