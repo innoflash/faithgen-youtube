@@ -1,4 +1,4 @@
-package net.faithgen.youtube;
+package net.faithgen.youtube.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +19,10 @@ import net.faithgen.sdk.http.types.ServerResponse;
 import net.faithgen.sdk.singletons.GSONSingleton;
 import net.faithgen.sdk.singletons.VolleySingleton;
 import net.faithgen.sdk.utils.Dialogs;
-import net.faithgen.youtube.activities.YTBPlayer;
+import net.faithgen.youtube.R;
+import net.faithgen.youtube.YouTubeAdapter;
+import net.faithgen.youtube.YouTubeObject;
+import net.faithgen.youtube.YouTubeResponse;
 import net.faithgen.youtube.utils.Constants;
 import net.faithgen.youtube.utils.Utils;
 import net.innoflash.iosview.recyclerview.RecyclerTouchListener;
@@ -30,7 +33,7 @@ import java.util.List;
 
 import br.com.liveo.searchliveo.SearchLiveo;
 
-public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRefreshListener, RecyclerViewClickListener {
+public class YouTubeActivity extends FaithGenActivity implements SwipeRefreshLayout.OnRefreshListener, RecyclerViewClickListener {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchLiveo searchLiveo;
@@ -64,7 +67,7 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
         searchLiveo = findViewById(R.id.search_liveo);
         searchLiveo.with(this, charSequence -> {
             filterText = (String) charSequence;
-            VolleySingleton.getInstance().getRequestQueue().cancelAll("Request_XTag");
+            faithGenAPI.cancelRequests();
             loadYouTubeVideos(null, true);
         })
                 .showVoice()
@@ -111,7 +114,7 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
                 else
                     youTubeObjects.addAll(youTubeResponse.getItems());
                 if (videosListView.getAdapter() == null || videosListView.getAdapter().getItemCount() == 0 || reload) {
-                    youTubeAdapter = new YouTubeAdapter(YouTube.this, youTubeObjects);
+                    youTubeAdapter = new YouTubeAdapter(YouTubeActivity.this, youTubeObjects);
                     videosListView.setAdapter(youTubeAdapter);
                 } else {
                     youTubeAdapter.notifyDataSetChanged();
@@ -122,7 +125,7 @@ public class YouTube extends FaithGenActivity implements SwipeRefreshLayout.OnRe
             @Override
             public void onError(ErrorResponse errorResponse) {
                 if (youTubeResponse == null)
-                    Dialogs.showOkDialog(YouTube.this, net.faithgen.sdk.utils.Constants.SERVER_ERROR, true);
+                    Dialogs.showOkDialog(YouTubeActivity.this, net.faithgen.sdk.utils.Constants.SERVER_ERROR, true);
                 swipeRefreshLayout.setRefreshing(false);
             }
         };

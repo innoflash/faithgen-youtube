@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:keepScreenOn="true"
     android:orientation="vertical"
-    tools:context=".YouTube">
+    tools:context=".activities.YouTubeActivity">
     <br.com.liveo.searchliveo.SearchLiveo
         android:id="@+id/search_liveo"
         android:layout_width="match_parent"

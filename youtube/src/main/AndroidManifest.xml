@@ -7,15 +7,15 @@
     <application>
         <activity
             android:name=".activities.YTBPlayer"
-            android:parentActivityName=".YouTube"
+            android:parentActivityName=".activities.YouTubeActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.faithgen.youtube.YouTube" />
+                android:value="net.faithgen.youtube.activities.YouTubeActivity" />
         </activity>
         <activity
-            android:name=".YouTube"
+            android:name=".activities.YouTubeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

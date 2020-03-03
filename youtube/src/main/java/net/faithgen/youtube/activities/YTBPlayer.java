@@ -47,6 +47,5 @@ public class YTBPlayer extends YouTubeBaseActivity implements YouTubePlayer.OnIn
             youTubeInitializationResult.getErrorDialog(this, RECOVERY_DIALOG_REQUEST).show();
         else
             Utils.openVideo(this, videoId);
-        //  Dialogs.showOkDialog(this, youTubeInitializationResult.toString(), true);
     }
 }

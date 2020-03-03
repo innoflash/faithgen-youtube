@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
-import net.faithgen.youtube.YouTube;
+import net.faithgen.youtube.activities.YouTubeActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +17,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         open = findViewById(R.id.open);
-        open.setOnClickListener(view -> startActivity(new Intent(this, YouTube.class)));
+        open.setOnClickListener(view -> startActivity(new Intent(this, YouTubeActivity.class)));
     }
 }
