@@ -38,7 +38,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    api 'com.github.faithgen:android-sdk:v1.0.8' //faithgen SDK
+    api 'com.github.faithgen:android-sdk:v1.1.4' //faithgen SDK
     implementation 'com.github.rudsonlive:searchliveo:1.1.2' //search library
     implementation 'com.google.android.material:material:1.0.0'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
