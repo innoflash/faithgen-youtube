@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="YouTubeView">
-        <attr name="video_title" format="string"/>
-        <attr name="video_caption" format="string"/>
-        <attr name="video_date" format="string"/>
-        <attr name="video_image" format="reference"/>
-    </declare-styleable>
-</resources>
