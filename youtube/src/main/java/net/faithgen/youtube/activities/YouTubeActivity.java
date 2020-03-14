@@ -17,7 +17,6 @@ import net.faithgen.sdk.http.ErrorResponse;
 import net.faithgen.sdk.http.FaithGenAPI;
 import net.faithgen.sdk.http.types.ServerResponse;
 import net.faithgen.sdk.singletons.GSONSingleton;
-import net.faithgen.sdk.singletons.VolleySingleton;
 import net.faithgen.sdk.utils.Dialogs;
 import net.faithgen.youtube.R;
 import net.faithgen.youtube.YouTubeAdapter;
@@ -107,18 +106,18 @@ public class YouTubeActivity extends FaithGenActivity implements SwipeRefreshLay
         return new ServerResponse() {
             @Override
             public void onServerResponse(String serverResponse) {
-                Log.d("Tag", "onServerResponse: " + serverResponse);
                 youTubeResponse = GSONSingleton.Companion.getInstance().getGson().fromJson(serverResponse, YouTubeResponse.class);
                 if (youTubeObjects == null || youTubeObjects.size() == 0 || reload)
                     youTubeObjects = youTubeResponse.getItems();
                 else
                     youTubeObjects.addAll(youTubeResponse.getItems());
+
                 if (videosListView.getAdapter() == null || videosListView.getAdapter().getItemCount() == 0 || reload) {
                     youTubeAdapter = new YouTubeAdapter(YouTubeActivity.this, youTubeObjects);
                     videosListView.setAdapter(youTubeAdapter);
-                } else {
+                } else
                     youTubeAdapter.notifyDataSetChanged();
-                }
+
                 swipeRefreshLayout.setRefreshing(false);
             }
 
